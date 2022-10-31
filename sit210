@@ -1,0 +1,54 @@
+# IMPORTING #
+from gpiozero import LED
+import RPi.GPIO   # GPIO #
+from guizero import App , Text , TextBox , PushButton
+from time import sleep
+RPi.GPIO.setmode(RPi.GPIO.BCM)
+
+# HARDWARE SETTING UP PINS #
+led_red=LED(18)
+led_red2=LED(14)
+
+# MORSE CODE DICTIONARY FROM (A-Z) # 
+MORSE_CODE_DICTIONARY = { ' ':'/', 'A':'.-', 'B':'-...', 'C':'-.-.', 'D':'-..', 'E':'.', 'F':'..-.', 'G':'--.', 'H':'....',
+                    'I':'..', 'J':'.---', 'K':'-.-', 'L':'.-..', 'M':'--', 'N':'-.','O':'---', 'P':'.--.', 'Q':'--.-',
+                    'R':'.-.', 'S':'...', 'T':'-','U':'..-', 'V':'...-', 'W':'.--','X':'-..-', 'Y':'-.--', 'Z':'--..'}
+
+# CONVERTING TEXT TO MORSE CODE # 
+def Convert_Text_to_MorseCode():
+    text=name.value
+    txt = text[0:12]
+    code = [MORSE_CODE_DICTIONARY[i.upper()] + ' ' for i in txt if i.upper() in MORSE_CODE_DICTIONARY.keys()]
+    morse=''.join(code)
+    print(morse)
+    for i in morse:
+        if i=='.': # DOT = " . " REPERSENT 1 SECOND ON AND OFF OF THE LED #
+            led_red.on()
+            led_red2.on()  
+            sleep(1)
+            led_red.off()
+            led_red2.off()
+            sleep(1)
+            
+            
+        elif i=='-':  # DASH = " - " REPERSENT 2 SECOND ON AND OFF OF THE LED #
+            led_red.on() 
+            led_red2.on()
+            sleep(2)
+            led_red.off()
+            led_red2.off()
+            sleep(1)
+            
+        else:
+            sleep(1)
+ 
+# GUI TOGGLERS #
+action = App(title = " TEXT TO MORSE CODE BLINKING CONVERTER ")
+intro = Text(action,text=" PLEASE ENTER THE TEXT YOU WISH TO FLASH IN LED ")
+name= TextBox(action,width=12)
+
+# SUBMIT BUTTON #
+txt=PushButton(action,command=Convert_Text_to_MorseCode,text="ALL GOOD!! SUBMIT")
+
+# DISPLAY #
+action.display()
